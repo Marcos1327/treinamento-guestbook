@@ -14,6 +14,8 @@
 
 package com.liferay.docs.guestbook.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.docs.guestbook.exception.GuestbookEntryEmailException;
 import com.liferay.docs.guestbook.exception.GuestbookEntryMessageException;
 import com.liferay.docs.guestbook.exception.GuestbookEntryNameException;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -38,16 +41,12 @@ import org.osgi.service.component.annotations.Component;
 /**
  * @author Liferay
  */
-@Component(
-	property = "model.class.name=com.liferay.docs.guestbook.model.GuestbookEntry",
-	service = AopService.class
-)
-public class GuestbookEntryLocalServiceImpl	extends GuestbookEntryLocalServiceBaseImpl {
-	
+@Component(property = "model.class.name=com.liferay.docs.guestbook.model.GuestbookEntry", service = AopService.class)
+public class GuestbookEntryLocalServiceImpl extends GuestbookEntryLocalServiceBaseImpl {
+
 	@Indexable(type = IndexableType.REINDEX)
-	public GuestbookEntry addGuestbookEntry(long userId, long guestbookId, String name,
-			String email, String message, ServiceContext serviceContext)
-		throws PortalException {
+	public GuestbookEntry addGuestbookEntry(long userId, long guestbookId, String name, String email, String message,
+			ServiceContext serviceContext) throws PortalException {
 
 		long groupId = serviceContext.getScopeGroupId();
 
@@ -75,25 +74,30 @@ public class GuestbookEntryLocalServiceImpl	extends GuestbookEntryLocalServiceBa
 		entry.setMessage(message);
 
 		guestbookEntryPersistence.update(entry);
-		
-		resourceLocalService.addResources(user.getCompanyId(), groupId, userId,
-			    GuestbookEntry.class.getName(), entryId, false, true, true);
+
+		resourceLocalService.addResources(user.getCompanyId(), groupId, userId, GuestbookEntry.class.getName(), entryId,
+				false, true, true);
+
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(userId, groupId, entry.getCreateDate(),
+				entry.getModifiedDate(), GuestbookEntry.class.getName(), entryId, entry.getUuid(), 0,
+				serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true, null, null, null,
+				null, ContentTypes.TEXT_HTML, entry.getMessage(), null, null, null, null, 0, 0, null);
+
+		assetLinkLocalService.updateLinks(userId, assetEntry.getEntryId(), serviceContext.getAssetLinkEntryIds(),
+				AssetLinkConstants.TYPE_RELATED);
 
 		return entry;
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
-	public GuestbookEntry updateGuestbookEntry(long userId, long guestbookId,
-			long entryId, String name, String email, String message,
-			ServiceContext serviceContext)
-		throws PortalException, SystemException {
+	public GuestbookEntry updateGuestbookEntry(long userId, long guestbookId, long entryId, String name, String email,
+			String message, ServiceContext serviceContext) throws PortalException, SystemException {
 
 		Date now = new Date();
 
 		validate(name, email, message);
 
-		GuestbookEntry entry =
-			guestbookEntryPersistence.findByPrimaryKey(entryId);
+		GuestbookEntry entry = guestbookEntryPersistence.findByPrimaryKey(entryId);
 
 		User user = userLocalService.getUserById(userId);
 
@@ -106,11 +110,18 @@ public class GuestbookEntryLocalServiceImpl	extends GuestbookEntryLocalServiceBa
 		entry.setExpandoBridgeAttributes(serviceContext);
 
 		guestbookEntryPersistence.update(entry);
-		
-		resourceLocalService.updateResources(
-			      user.getCompanyId(), serviceContext.getScopeGroupId(), 
-			      GuestbookEntry.class.getName(), entryId, 
-			      serviceContext.getModelPermissions());
+
+		resourceLocalService.updateResources(user.getCompanyId(), serviceContext.getScopeGroupId(),
+				GuestbookEntry.class.getName(), entryId, serviceContext.getModelPermissions());
+
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(userId, serviceContext.getScopeGroupId(),
+				entry.getCreateDate(), entry.getModifiedDate(), GuestbookEntry.class.getName(), entryId,
+				entry.getUuid(), 0, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), true, true,
+				entry.getCreateDate(), null, null, null, ContentTypes.TEXT_HTML, entry.getMessage(), null, null, null,
+				null, 0, 0, serviceContext.getAssetPriority());
+
+		assetLinkLocalService.updateLinks(userId, assetEntry.getEntryId(), serviceContext.getAssetLinkEntryIds(),
+				AssetLinkConstants.TYPE_RELATED);
 
 		return entry;
 	}
@@ -119,22 +130,38 @@ public class GuestbookEntryLocalServiceImpl	extends GuestbookEntryLocalServiceBa
 	public GuestbookEntry deleteGuestbookEntry(GuestbookEntry entry) {
 
 		guestbookEntryPersistence.remove(entry);
-		
-		try {
-			resourceLocalService.deleteResource(
-					   entry.getCompanyId(), GuestbookEntry.class.getName(),
-					   ResourceConstants.SCOPE_INDIVIDUAL, entry.getEntryId());
-		} catch (PortalException e) {
-			e.printStackTrace();
-		}
+
+//		try {
+//			resourceLocalService.deleteResource(entry.getCompanyId(), GuestbookEntry.class.getName(),
+//					ResourceConstants.SCOPE_INDIVIDUAL, entry.getEntryId());
+//
+//			AssetEntry assetEntry = assetEntryLocalService.fetchEntry(GuestbookEntry.class.getName(),
+//					entry.getEntryId());
+//
+//			assetLinkLocalService.deleteLinks(assetEntry.getEntryId());
+//
+//			assetEntryLocalService.deleteEntry(assetEntry);
+//
+//		} catch (PortalException e) {
+//			e.printStackTrace();
+//		}
 
 		return entry;
 	}
 
 	public GuestbookEntry deleteGuestbookEntry(long entryId) throws PortalException {
 
-		GuestbookEntry entry =
-			guestbookEntryPersistence.findByPrimaryKey(entryId);
+		GuestbookEntry entry = guestbookEntryPersistence.findByPrimaryKey(entryId);
+		
+		resourceLocalService.deleteResource(entry.getCompanyId(), GuestbookEntry.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL, entry.getEntryId());
+
+		AssetEntry assetEntry = assetEntryLocalService.fetchEntry(GuestbookEntry.class.getName(),
+				entry.getEntryId());
+
+		assetLinkLocalService.deleteLinks(assetEntry.getEntryId());
+
+		assetEntryLocalService.deleteEntry(assetEntry);
 
 		return deleteGuestbookEntry(entry);
 	}
@@ -143,18 +170,16 @@ public class GuestbookEntryLocalServiceImpl	extends GuestbookEntryLocalServiceBa
 		return guestbookEntryPersistence.findByG_G(groupId, guestbookId);
 	}
 
-	public List<GuestbookEntry> getGuestbookEntries(long groupId, long guestbookId,
-			int start, int end) throws SystemException {
+	public List<GuestbookEntry> getGuestbookEntries(long groupId, long guestbookId, int start, int end)
+			throws SystemException {
 
-		return guestbookEntryPersistence.findByG_G(groupId, guestbookId, start,
-				end);
+		return guestbookEntryPersistence.findByG_G(groupId, guestbookId, start, end);
 	}
 
-	public List<GuestbookEntry> getGuestbookEntries(long groupId, long guestbookId,
-			int start, int end, OrderByComparator<GuestbookEntry> obc) {
+	public List<GuestbookEntry> getGuestbookEntries(long groupId, long guestbookId, int start, int end,
+			OrderByComparator<GuestbookEntry> obc) {
 
-		return guestbookEntryPersistence.findByG_G(groupId, guestbookId, start,
-				end, obc);
+		return guestbookEntryPersistence.findByG_G(groupId, guestbookId, start, end, obc);
 	}
 
 	public GuestbookEntry getGuestbookEntry(long entryId) throws PortalException {
@@ -165,8 +190,7 @@ public class GuestbookEntryLocalServiceImpl	extends GuestbookEntryLocalServiceBa
 		return guestbookEntryPersistence.countByG_G(groupId, guestbookId);
 	}
 
-	protected void validate(String name, String email, String entry)
-		throws PortalException {
+	protected void validate(String name, String email, String entry) throws PortalException {
 
 		if (Validator.isNull(name)) {
 			throw new GuestbookEntryNameException();

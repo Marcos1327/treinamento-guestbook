@@ -6,6 +6,8 @@
 <%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui"%>
 <%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
 <%@ taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %>
+<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %>
+<%@ taglib uri="http://liferay.com/tld/comment" prefix="liferay-comment" %>
 
 <%@ page import="java.util.List" %>
 <%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
@@ -19,12 +21,14 @@
 <%@ page import="com.liferay.docs.guestbook.service.GuestbookEntryLocalServiceUtil" %>
 <%@ page import="com.liferay.docs.guestbook.service.GuestbookLocalServiceUtil" %>
 <%@ page import="com.liferay.docs.guestbook.model.GuestbookEntry" %> 
+
 <%@ page import="com.liferay.docs.guestbook.web.internal.security.permission.resource.GuestbookModelPermission" %>
 <%@ page import="com.liferay.docs.guestbook.web.internal.security.permission.resource.GuestbookPermission" %>
 <%@ page import="com.liferay.docs.guestbook.web.internal.security.permission.resource.GuestbookEntryPermission" %>
 <%@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 <%@ page import="com.liferay.portal.kernel.security.permission.ActionKeys" %>
 <%@ page import="com.liferay.portal.kernel.dao.search.SearchContainer" %>
+
 <%@ page import="com.liferay.portal.kernel.exception.PortalException" %>
 <%@ page import="com.liferay.portal.kernel.exception.SystemException" %>
 <%@ page import="com.liferay.portal.kernel.language.LanguageUtil" %>
@@ -40,6 +44,15 @@
 <%@ page import="com.liferay.portal.kernel.util.GetterUtil" %>
 <%@ page import="com.liferay.portal.kernel.util.Validator" %>
 <%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
+
+<%@ page import="com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil" %>
+<%@ page import="com.liferay.asset.kernel.service.AssetTagLocalServiceUtil" %>
+<%@ page import="com.liferay.asset.kernel.model.AssetEntry" %>
+<%@ page import="com.liferay.asset.kernel.model.AssetTag" %>
+<%@ page import="com.liferay.portal.kernel.util.ListUtil" %>
+<%@ page import="com.liferay.portal.kernel.comment.Discussion" %>
+<%@ page import="com.liferay.portal.kernel.comment.CommentManagerUtil" %>
+<%@ page import="com.liferay.portal.kernel.service.ServiceContextFunction" %>
 
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Map" %>
