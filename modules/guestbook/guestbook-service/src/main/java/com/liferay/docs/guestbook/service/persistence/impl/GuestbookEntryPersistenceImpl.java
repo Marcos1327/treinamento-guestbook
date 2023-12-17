@@ -166,7 +166,6 @@ public class GuestbookEntryPersistenceImpl
 	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching guestbook entries
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<GuestbookEntry> findByUuid(
 		String uuid, int start, int end,
@@ -195,7 +194,7 @@ public class GuestbookEntryPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<GuestbookEntry>)finderCache.getResult(
-				finderPath, finderArgs, null);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (GuestbookEntry guestbookEntry : list) {
@@ -578,7 +577,7 @@ public class GuestbookEntryPersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, null);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(2);
@@ -708,7 +707,7 @@ public class GuestbookEntryPersistenceImpl
 
 		if (useFinderCache) {
 			result = finderCache.getResult(
-				_finderPathFetchByUUID_G, finderArgs, null);
+				_finderPathFetchByUUID_G, finderArgs);
 		}
 
 		if (result instanceof GuestbookEntry) {
@@ -819,7 +818,7 @@ public class GuestbookEntryPersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid, groupId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, null);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -985,7 +984,7 @@ public class GuestbookEntryPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<GuestbookEntry>)finderCache.getResult(
-				finderPath, finderArgs, null);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (GuestbookEntry guestbookEntry : list) {
@@ -1401,7 +1400,7 @@ public class GuestbookEntryPersistenceImpl
 
 		Object[] finderArgs = new Object[] {uuid, companyId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, null);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -1565,7 +1564,7 @@ public class GuestbookEntryPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<GuestbookEntry>)finderCache.getResult(
-				finderPath, finderArgs, null);
+				finderPath, finderArgs);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (GuestbookEntry guestbookEntry : list) {
@@ -1955,7 +1954,7 @@ public class GuestbookEntryPersistenceImpl
 
 		Object[] finderArgs = new Object[] {groupId, guestbookId};
 
-		Long count = (Long)finderCache.getResult(finderPath, finderArgs, null);
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs);
 
 		if (count == null) {
 			StringBundler sb = new StringBundler(3);
@@ -2448,7 +2447,7 @@ public class GuestbookEntryPersistenceImpl
 
 		if (useFinderCache) {
 			list = (List<GuestbookEntry>)finderCache.getResult(
-				finderPath, finderArgs, null);
+				finderPath, finderArgs);
 		}
 
 		if (list == null) {
@@ -2518,7 +2517,7 @@ public class GuestbookEntryPersistenceImpl
 	@Override
 	public int countAll() {
 		Long count = (Long)finderCache.getResult(
-			_finderPathCountAll, FINDER_ARGS_EMPTY, null);
+			_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 		if (count == null) {
 			Session session = null;

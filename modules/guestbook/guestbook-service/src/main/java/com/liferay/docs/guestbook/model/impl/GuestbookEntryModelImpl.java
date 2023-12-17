@@ -1138,6 +1138,7 @@ public class GuestbookEntryModelImpl
 		return sb.toString();
 	}
 
+	@Override
 	public String toXmlString() {
 		Map<String, Function<GuestbookEntry, Object>> attributeGetterFunctions =
 			getAttributeGetterFunctions();
