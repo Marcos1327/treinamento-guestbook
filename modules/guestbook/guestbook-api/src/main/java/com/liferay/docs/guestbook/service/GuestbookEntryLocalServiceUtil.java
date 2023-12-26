@@ -273,19 +273,11 @@ public class GuestbookEntryLocalServiceUtil {
 	}
 
 	public static List<GuestbookEntry> getGuestbookEntries(
-			long groupId, long guestbookId, int start, int end)
+			long groupId, long guestbookId, int status, int start, int end)
 		throws SystemException {
 
 		return getService().getGuestbookEntries(
-			groupId, guestbookId, start, end);
-	}
-
-	public static List<GuestbookEntry> getGuestbookEntries(
-		long groupId, long guestbookId, int start, int end,
-		OrderByComparator<GuestbookEntry> obc) {
-
-		return getService().getGuestbookEntries(
-			groupId, guestbookId, start, end, obc);
+			groupId, guestbookId, status, start, end);
 	}
 
 	/**
@@ -329,8 +321,12 @@ public class GuestbookEntryLocalServiceUtil {
 		return getService().getGuestbookEntriesCount();
 	}
 
-	public static int getGuestbookEntriesCount(long groupId, long guestbookId) {
-		return getService().getGuestbookEntriesCount(groupId, guestbookId);
+	public static int getGuestbookEntriesCount(
+			long groupId, long guestbookId, int status)
+		throws SystemException {
+
+		return getService().getGuestbookEntriesCount(
+			groupId, guestbookId, status);
 	}
 
 	/**
@@ -410,6 +406,15 @@ public class GuestbookEntryLocalServiceUtil {
 
 		return getService().updateGuestbookEntry(
 			userId, guestbookId, entryId, name, email, message, serviceContext);
+	}
+
+	public static GuestbookEntry updateStatus(
+			long userId, long guestbookId, long entryId, int status,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws PortalException, SystemException {
+
+		return getService().updateStatus(
+			userId, guestbookId, entryId, status, serviceContext);
 	}
 
 	public static GuestbookEntryLocalService getService() {

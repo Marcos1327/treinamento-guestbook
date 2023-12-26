@@ -307,22 +307,11 @@ public class GuestbookEntryLocalServiceWrapper
 	@Override
 	public java.util.List<com.liferay.docs.guestbook.model.GuestbookEntry>
 			getGuestbookEntries(
-				long groupId, long guestbookId, int start, int end)
+				long groupId, long guestbookId, int status, int start, int end)
 		throws com.liferay.portal.kernel.exception.SystemException {
 
 		return _guestbookEntryLocalService.getGuestbookEntries(
-			groupId, guestbookId, start, end);
-	}
-
-	@Override
-	public java.util.List<com.liferay.docs.guestbook.model.GuestbookEntry>
-		getGuestbookEntries(
-			long groupId, long guestbookId, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator
-				<com.liferay.docs.guestbook.model.GuestbookEntry> obc) {
-
-		return _guestbookEntryLocalService.getGuestbookEntries(
-			groupId, guestbookId, start, end, obc);
+			groupId, guestbookId, status, start, end);
 	}
 
 	/**
@@ -374,9 +363,12 @@ public class GuestbookEntryLocalServiceWrapper
 	}
 
 	@Override
-	public int getGuestbookEntriesCount(long groupId, long guestbookId) {
+	public int getGuestbookEntriesCount(
+			long groupId, long guestbookId, int status)
+		throws com.liferay.portal.kernel.exception.SystemException {
+
 		return _guestbookEntryLocalService.getGuestbookEntriesCount(
-			groupId, guestbookId);
+			groupId, guestbookId, status);
 	}
 
 	/**
@@ -466,6 +458,17 @@ public class GuestbookEntryLocalServiceWrapper
 
 		return _guestbookEntryLocalService.updateGuestbookEntry(
 			userId, guestbookId, entryId, name, email, message, serviceContext);
+	}
+
+	@Override
+	public com.liferay.docs.guestbook.model.GuestbookEntry updateStatus(
+			long userId, long guestbookId, long entryId, int status,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   com.liferay.portal.kernel.exception.SystemException {
+
+		return _guestbookEntryLocalService.updateStatus(
+			userId, guestbookId, entryId, status, serviceContext);
 	}
 
 	@Override
